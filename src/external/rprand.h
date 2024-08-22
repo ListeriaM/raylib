@@ -136,7 +136,7 @@ RPRANDAPI void rprand_unload_sequence(int *sequence);           // Unload pseudo
 
 #if defined(RPRAND_IMPLEMENTATION)
 
-#include <stdlib.h>     // Required for: calloc(), free(), abs()
+#include <stdlib.h>     // Required for: calloc(), free()
 #include <stdint.h>     // Required for data types: uint32_t, uint64_t
 
 //----------------------------------------------------------------------------------
@@ -160,6 +160,7 @@ static uint32_t rprand_state[4] = {             // Xoshiro128** state, initializ
 //----------------------------------------------------------------------------------
 static uint32_t rprand_xoshiro(void);           // Xoshiro128** generator (uses global rprand_state)
 static uint64_t rprand_splitmix64(void);        // SplitMix64 generator (uses seed to generate rprand_state)
+static uint32_t rprand_randint(uint32_t genmax); // Get random value in range 0 .. genmax inclusive
 
 //----------------------------------------------------------------------------------
 // Module Functions Definition
@@ -171,27 +172,43 @@ void rprand_set_seed(unsigned long long seed)
     rprand_seed = (uint64_t)seed;    // Set SplitMix64 seed for further use
 
     // To generate the Xoshiro128** state, we use SplitMix64 generator first
-    // We generate 4 pseudo-random 64bit numbers that we combine using their LSB|MSB
-    rprand_state[0] = (uint32_t)(rprand_splitmix64() & 0xffffffff);
-    rprand_state[1] = (uint32_t)((rprand_splitmix64() & 0xffffffff00000000) >> 32);
-    rprand_state[2] = (uint32_t)(rprand_splitmix64() & 0xffffffff);
-    rprand_state[3] = (uint32_t)((rprand_splitmix64() & 0xffffffff00000000) >> 32);
+    // We generate 2 pseudo-random 64bit numbers that we combine using their LSB|MSB
+    uint64_t r1 = rprand_splitmix64();
+    uint64_t r2 = rprand_splitmix64();
+
+    rprand_state[0] = (uint32_t)(r1 & 0xffffffff);
+    rprand_state[1] = (uint32_t)((r1 & 0xffffffff00000000) >> 32);
+    rprand_state[2] = (uint32_t)(r2 & 0xffffffff);
+    rprand_state[3] = (uint32_t)((r2 & 0xffffffff00000000) >> 32);
 }
 
 // Get random value within a range, min and max included
 int rprand_get_value(int min, int max)
 {
-    int value = rprand_xoshiro()%(abs(max - min) + 1) + min;
+    if (max < min)
+    {
+        int t = min;
+        min = max;
+        max = t;
+    }
 
-    return value;
+    return min + rprand_randint((unsigned int)max - (unsigned int)min);
 }
 
 // Load pseudo-random numbers sequence with no duplicates, min and max included
 int *rprand_load_sequence(unsigned int count, int min, int max)
 {
     int *sequence = NULL;
+    unsigned int i, j;
 
-    if (count > (unsigned int)(abs(max - min) + 1))
+    if (max < min)
+    {
+        int t = min;
+        min = max;
+        max = t;
+    }
+
+    if ((count > 0) && (count - 1 > (unsigned int)max - (unsigned int)min))
     {
         RPRAND_LOG("WARNING: Sequence count required is greater than range provided\n");
         //count = (max - min);
@@ -201,28 +218,21 @@ int *rprand_load_sequence(unsigned int count, int min, int max)
     sequence = (int *)RPRAND_CALLOC(count, sizeof(int));
 
     int value = 0;
-    bool value_is_dup = false;
 
-    for (unsigned int i = 0; i < count;)
+    for (i = 0; i < count; i++)
     {
-        value = ((unsigned int)rprand_xoshiro()%(abs(max - min) + 1)) + min;
+retry:
+        value = min + rprand_randint((unsigned int)max - (unsigned int)min);
 
-        for (unsigned int j = 0; j < i; j++)
+        for (j = 0; j < i; j++)
         {
             if (sequence[j] == value)
             {
-                value_is_dup = true;
-                break;
+                goto retry;
             }
         }
 
-        if (!value_is_dup)
-        {
-            sequence[i] = value;
-            i++;
-        }
-
-        value_is_dup = false;
+        sequence[i] = value;
     }
 
     return sequence;
@@ -266,7 +276,7 @@ static inline uint32_t rprand_rotate_left(const uint32_t x, int k)
 //
 //   The state must be seeded so that it is not everywhere zero.
 //
-uint32_t rprand_xoshiro(void)
+static uint32_t rprand_xoshiro(void)
 {
     const uint32_t result = rprand_rotate_left(rprand_state[1]*5, 7)*9;
     const uint32_t t = rprand_state[1] << 9;
@@ -300,12 +310,39 @@ uint32_t rprand_xoshiro(void)
 //
 //   It is a very fast generator passing BigCrush, and it can be useful if
 //   for some reason you absolutely want 64 bits of state.
-uint64_t rprand_splitmix64()
+static uint64_t rprand_splitmix64()
 {
     uint64_t z = (rprand_seed += 0x9e3779b97f4a7c15);
     z = (z ^ (z >> 30))*0xbf58476d1ce4e5b9;
     z = (z ^ (z >> 27))*0x94d049bb133111eb;
     return z ^ (z >> 31);
+}
+
+// Get random value in range 0 .. genmax inclusive.
+//
+// This is an adaptation of Lemire's "nearly divisionless" method:
+// https://arxiv.org/abs/1805.10941
+static uint32_t rprand_randint(uint32_t genmax)
+{
+    uint32_t low, t;
+    uint64_t mul, range;
+
+    // the requested range may be [0 .. 2^32 - 1], so we use 64 bits
+    range = (uint64_t)genmax + 1;
+
+    mul = (uint64_t)rprand_xoshiro()*range;
+    low = (uint32_t)mul;
+    if (low < (uint32_t)range)
+    {
+        t = -(uint32_t)range % (uint32_t)range; // 2^32 % range
+        while (low < t)
+        {
+            mul = (uint64_t)rprand_xoshiro()*range;
+            low = (uint32_t)mul;
+        }
+    }
+
+    return (uint32_t)(mul >> 32);
 }
 
 #endif  // RPRAND_IMPLEMENTATION
