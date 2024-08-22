@@ -44,11 +44,16 @@ revision history:
     1.02  (2021-09-10)  @raysan5: Reviewed some formating
     1.03  (2021-10-02)  @catmanl: Reduce warnings on gcc
     1.04  (2021-10-17)  @warzes: Fixing the error of loading VOX models
+    1.05  (2024-08-22)  @listeriam: Add VOXDEF macro & static const tables
 
 */
 
 #ifndef VOX_LOADER_H
 #define VOX_LOADER_H
+
+#ifndef VOXDEF
+# define VOXDEF
+#endif
 
 // Allow custom memory allocators
 #ifndef VOX_MALLOC
@@ -137,7 +142,9 @@ extern "C" {            // Prevents name mangling of functions
 #endif
 
 // Functions
+VOXDEF
 int Vox_LoadFromMemory(unsigned char* pvoxData, unsigned int voxDataSize, VoxArray3D* pvoxarray);
+VOXDEF
 void Vox_FreeArrays(VoxArray3D* voxarray);
 
 #ifdef __cplusplus
@@ -273,7 +280,7 @@ static void freeArrayColor(ArrayColor* a)
 
 // 
 // CCW
-const int fv[6][4] = {
+static const int fv[6][4] = {
 	{0, 2, 6, 4 }, //-X
 	{5, 7, 3, 1 }, //+X
 	{0, 4, 5, 1 }, //-y
@@ -282,7 +289,7 @@ const int fv[6][4] = {
 	{4, 6, 7, 5 }  //+Z
 };
 
-const VoxVector3 SolidVertex[] = {
+static const VoxVector3 SolidVertex[] = {
 	{0, 0, 0},   //0
 	{1, 0, 0},   //1
 	{0, 1, 0},   //2
@@ -293,7 +300,7 @@ const VoxVector3 SolidVertex[] = {
 	{1, 1, 1}    //7
  };
 
-const VoxVector3 FacesPerSideNormal[] = {
+static const VoxVector3 FacesPerSideNormal[] = {
 	{ -1, 0, 0 }, //-X
 	{1, 0, 0 },   //+X
 	{0,-1, 0},    //-Y
@@ -544,6 +551,7 @@ static void Vox_Build_Voxel(VoxArray3D* pvoxArray, int x, int y, int z, int matI
 }
 
 // MagicaVoxel *.vox file format Loader
+VOXDEF
 int Vox_LoadFromMemory(unsigned char* pvoxData, unsigned int voxDataSize, VoxArray3D* pvoxarray)
 {
 	//////////////////////////////////////////////////
@@ -692,6 +700,7 @@ int Vox_LoadFromMemory(unsigned char* pvoxData, unsigned int voxDataSize, VoxArr
 	return VOX_SUCCESS;
 }
 
+VOXDEF
 void Vox_FreeArrays(VoxArray3D* voxarray)
 {
 	// Free chunks

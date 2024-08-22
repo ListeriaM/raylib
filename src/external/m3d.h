@@ -36,6 +36,10 @@
 #ifndef _M3D_H_
 #define _M3D_H_
 
+#ifndef M3D_DEF
+# define M3D_DEF
+#endif
+
 #ifdef  __cplusplus
 extern "C" {
 #endif
@@ -586,15 +590,25 @@ typedef int (*m3dprsc_t)(const char *name, const void *script, uint32_t len, m3d
 
 /*** C prototypes ***/
 /* import / export */
+M3D_DEF
 m3d_t *m3d_load(unsigned char *data, m3dread_t readfilecb, m3dfree_t freecb, m3d_t *mtllib);
+#ifdef M3D_EXPORTER
+M3D_DEF
 unsigned char *m3d_save(m3d_t *model, int quality, int flags, unsigned int *size);
+#endif
+M3D_DEF
 void m3d_free(m3d_t *model);
 /* generate animation pose skeleton */
+M3D_DEF
 m3dtr_t *m3d_frame(m3d_t *model, M3D_INDEX actionid, M3D_INDEX frameid, m3dtr_t *skeleton);
+M3D_DEF
 m3db_t *m3d_pose(m3d_t *model, M3D_INDEX actionid, uint32_t msec);
 
 /* private prototypes used by both importer and exporter */
+M3D_DEF
 char *_m3d_safestr(char *in, int morelines);
+
+#endif
 
 /*** C implementation ***/
 #ifdef M3D_IMPLEMENTATION
@@ -2125,6 +2139,7 @@ static char *_m3d_getfloat(char *s, M3D_FLOAT *ret)
 #endif
 #if !defined(M3D_NODUP) && (!defined(M3D_NOIMPORTER) || defined(M3D_ASCII) || defined(M3D_EXPORTER))
 /* helper function to create safe strings */
+M3D_DEF
 char *_m3d_safestr(char *in, int morelines)
 {
     char *out, *o, *i = in;
@@ -2379,6 +2394,7 @@ static M3D_FLOAT _m3d_rsq(M3D_FLOAT x)
 /**
  * Function to decode a Model 3D into in-memory format
  */
+M3D_DEF
 m3d_t *m3d_load(unsigned char *data, m3dread_t readfilecb, m3dfree_t freecb, m3d_t *mtllib)
 {
     unsigned char *end, *chunk, *buff, weights[8];
@@ -4197,6 +4213,7 @@ postprocess:
 /**
  * Calculates skeletons for animation frames, returns a working copy (should be freed after use)
  */
+M3D_DEF
 m3dtr_t *m3d_frame(m3d_t *model, M3D_INDEX actionid, M3D_INDEX frameid, m3dtr_t *skeleton)
 {
     unsigned int i;
@@ -4241,6 +4258,7 @@ gen:    s = 0;
 /**
  * Returns interpolated animation-pose, a working copy (should be freed after use)
  */
+M3D_DEF
 m3db_t *m3d_pose(m3d_t *model, M3D_INDEX actionid, uint32_t msec)
 {
     unsigned int i, j, l;
@@ -4359,6 +4377,7 @@ m3db_t *m3d_pose(m3d_t *model, M3D_INDEX actionid, uint32_t msec)
 /**
  * Free the in-memory model
  */
+M3D_DEF
 void m3d_free(m3d_t *model)
 {
     unsigned int i, j;
@@ -4719,6 +4738,7 @@ static char *_m3d_prtbone(char *ptr, m3db_t *bone, M3D_INDEX numbone, M3D_INDEX 
 /**
  * Function to encode an in-memory model into on storage Model 3D format
  */
+M3D_DEF
 unsigned char *m3d_save(m3d_t *model, int quality, int flags, unsigned int *size)
 {
 #ifdef M3D_ASCII
@@ -6543,5 +6563,3 @@ namespace M3D {
 #endif
 
 #endif /* __cplusplus */
-
-#endif

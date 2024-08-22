@@ -69,6 +69,14 @@ See end of file for license information.
 #ifndef MSF_GIF_H
 #define MSF_GIF_H
 
+#ifndef MSF_GIF_DEF
+# define MSF_GIF_DEF
+#endif
+
+#ifndef MSF_GIF_API
+# define MSF_GIF_API MSF_GIF_DEF
+#endif
+
 #include <stdint.h>
 #include <stddef.h>
 
@@ -114,6 +122,7 @@ extern "C" {
  * @param height               Image height in pixels.
  * @return                     Non-zero on success, 0 on error.
  */
+MSF_GIF_DEF
 int msf_gif_begin(MsfGifState * handle, int width, int height);
 
 /**
@@ -133,27 +142,30 @@ int msf_gif_begin(MsfGifState * handle, int width, int height);
  *                             If you want to flip the image, just pass in a negative pitch.
  * @return                     Non-zero on success, 0 on error.
  */
+MSF_GIF_DEF
 int msf_gif_frame(MsfGifState * handle, uint8_t * pixelData, int centiSecondsPerFame, int maxBitDepth, int pitchInBytes);
 
 /**
  * @return                     A block of memory containing the gif file data, or NULL on error.
  *                             You are responsible for freeing this via `msf_gif_free()`.
  */
+MSF_GIF_DEF
 MsfGifResult msf_gif_end(MsfGifState * handle);
 
 /**
  * @param result                The MsfGifResult struct, verbatim as it was returned from `msf_gif_end()`.
  */
+MSF_GIF_DEF
 void msf_gif_free(MsfGifResult result);
 
 //The gif format only supports 1-bit transparency, meaning a pixel will either be fully transparent or fully opaque.
 //Pixels with an alpha value less than the alpha threshold will be treated as transparent.
 //To enable exporting transparent gifs, set it to a value between 1 and 255 (inclusive) before calling msf_gif_frame().
 //Setting it to 0 causes the alpha channel to be ignored. Its initial value is 0.
-extern int msf_gif_alpha_threshold;
+MSF_GIF_DEF int msf_gif_alpha_threshold;
 
 //Set `msf_gif_bgra_flag = true` before calling `msf_gif_frame()` if your pixels are in BGRA byte order instead of RBGA.
-extern int msf_gif_bgra_flag;
+MSF_GIF_DEF int msf_gif_bgra_flag;
 
 
 
@@ -171,8 +183,11 @@ extern int msf_gif_bgra_flag;
 //  fclose(fp);
 //If you use a custom file write function, you must take care to return the same values that fwrite() would return.
 //Note that all three functions will potentially write to the file.
+MSF_GIF_DEF
 int msf_gif_begin_to_file(MsfGifState * handle, int width, int height, MsfGifFileWriteFunc func, void * filePointer);
+MSF_GIF_DEF
 int msf_gif_frame_to_file(MsfGifState * handle, uint8_t * pixelData, int centiSecondsPerFame, int maxBitDepth, int pitchInBytes);
+MSF_GIF_DEF
 int msf_gif_end_to_file(MsfGifState * handle); //returns 0 on error and non-zero on success
 
 #ifdef __cplusplus
@@ -249,7 +264,9 @@ static inline int msf_imax(int a, int b) { return b < a? a : b; }
 #include <emmintrin.h>
 #endif
 
+MSF_GIF_API
 int msf_gif_alpha_threshold = 0;
+MSF_GIF_API
 int msf_gif_bgra_flag = 0;
 
 static void msf_cook_frame(MsfCookedFrame * frame, uint8_t * raw, uint8_t * used,
@@ -548,6 +565,7 @@ static void msf_free_gif_state(MsfGifState * handle) {
     handle->listHead = NULL; //this implicitly marks the handle as invalid until the next msf_gif_begin() call
 }
 
+MSF_GIF_DEF
 int msf_gif_begin(MsfGifState * handle, int width, int height) { MsfTimeFunc
     //NOTE: we cannot stomp the entire struct to zero because we must preserve `customAllocatorContext`.
     MsfCookedFrame empty = {0}; //god I hate MSVC...
@@ -586,6 +604,7 @@ int msf_gif_begin(MsfGifState * handle, int width, int height) { MsfTimeFunc
     return 1;
 }
 
+MSF_GIF_DEF
 int msf_gif_frame(MsfGifState * handle, uint8_t * pixelData, int centiSecondsPerFame, int maxBitDepth, int pitchInBytes)
 { MsfTimeFunc
     if (!handle->listHead) { return 0; }
@@ -613,6 +632,7 @@ int msf_gif_frame(MsfGifState * handle, uint8_t * pixelData, int centiSecondsPer
     return 1;
 }
 
+MSF_GIF_DEF
 MsfGifResult msf_gif_end(MsfGifState * handle) { MsfTimeFunc
     if (!handle->listHead) { MsfGifResult empty = {0}; return empty; }
 
@@ -638,6 +658,7 @@ MsfGifResult msf_gif_end(MsfGifState * handle) { MsfTimeFunc
     return ret;
 }
 
+MSF_GIF_DEF
 void msf_gif_free(MsfGifResult result) { MsfTimeFunc
     if (result.data) { MSF_GIF_FREE(result.contextPointer, result.data, result.allocSize); }
 }
@@ -646,12 +667,14 @@ void msf_gif_free(MsfGifResult result) { MsfTimeFunc
 /// To-file API                                                                                                      ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+MSF_GIF_DEF
 int msf_gif_begin_to_file(MsfGifState * handle, int width, int height, MsfGifFileWriteFunc func, void * filePointer) {
     handle->fileWriteFunc = func;
     handle->fileWriteData = filePointer;
     return msf_gif_begin(handle, width, height);
 }
 
+MSF_GIF_DEF
 int msf_gif_frame_to_file(MsfGifState * handle, uint8_t * pixelData, int centiSecondsPerFame, int maxBitDepth, int pitchInBytes) {
     if (!msf_gif_frame(handle, pixelData, centiSecondsPerFame, maxBitDepth, pitchInBytes)) { return 0; }
 
@@ -663,6 +686,7 @@ int msf_gif_frame_to_file(MsfGifState * handle, uint8_t * pixelData, int centiSe
     return 1;
 }
 
+MSF_GIF_DEF
 int msf_gif_end_to_file(MsfGifState * handle) {
     //NOTE: this is a somewhat hacky implementation which is not perfectly efficient, but it's good enough for now
     MsfGifResult result = msf_gif_end(handle);

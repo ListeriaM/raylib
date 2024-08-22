@@ -73,16 +73,19 @@
 //    Jordan Peck - seeded noise
 //
 
+#ifndef STBPDEF
+# define STBPDEF
+#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-extern float stb_perlin_noise3(float x, float y, float z, int x_wrap, int y_wrap, int z_wrap);
-extern float stb_perlin_noise3_seed(float x, float y, float z, int x_wrap, int y_wrap, int z_wrap, int seed);
-extern float stb_perlin_ridge_noise3(float x, float y, float z, float lacunarity, float gain, float offset, int octaves);
-extern float stb_perlin_fbm_noise3(float x, float y, float z, float lacunarity, float gain, int octaves);
-extern float stb_perlin_turbulence_noise3(float x, float y, float z, float lacunarity, float gain, int octaves);
-extern float stb_perlin_noise3_wrap_nonpow2(float x, float y, float z, int x_wrap, int y_wrap, int z_wrap, unsigned char seed);
+STBPDEF float stb_perlin_noise3(float x, float y, float z, int x_wrap, int y_wrap, int z_wrap);
+STBPDEF float stb_perlin_noise3_seed(float x, float y, float z, int x_wrap, int y_wrap, int z_wrap, int seed);
+STBPDEF float stb_perlin_ridge_noise3(float x, float y, float z, float lacunarity, float gain, float offset, int octaves);
+STBPDEF float stb_perlin_fbm_noise3(float x, float y, float z, float lacunarity, float gain, int octaves);
+STBPDEF float stb_perlin_turbulence_noise3(float x, float y, float z, float lacunarity, float gain, int octaves);
+STBPDEF float stb_perlin_noise3_wrap_nonpow2(float x, float y, float z, int x_wrap, int y_wrap, int z_wrap, unsigned char seed);
 #ifdef __cplusplus
 }
 #endif
@@ -210,6 +213,7 @@ static float stb__perlin_grad(int grad_idx, float x, float y, float z)
    return grad[0]*x + grad[1]*y + grad[2]*z;
 }
 
+static
 float stb_perlin_noise3_internal(float x, float y, float z, int x_wrap, int y_wrap, int z_wrap, unsigned char seed)
 {
    float u,v,w;
@@ -262,16 +266,19 @@ float stb_perlin_noise3_internal(float x, float y, float z, int x_wrap, int y_wr
    return stb__perlin_lerp(n0,n1,u);
 }
 
+STBPDEF
 float stb_perlin_noise3(float x, float y, float z, int x_wrap, int y_wrap, int z_wrap)
 {
     return stb_perlin_noise3_internal(x,y,z,x_wrap,y_wrap,z_wrap,0);
 }
 
+STBPDEF
 float stb_perlin_noise3_seed(float x, float y, float z, int x_wrap, int y_wrap, int z_wrap, int seed)
 {
     return stb_perlin_noise3_internal(x,y,z,x_wrap,y_wrap,z_wrap, (unsigned char) seed);
 }
 
+STBPDEF
 float stb_perlin_ridge_noise3(float x, float y, float z, float lacunarity, float gain, float offset, int octaves)
 {
    int i;
@@ -292,6 +299,7 @@ float stb_perlin_ridge_noise3(float x, float y, float z, float lacunarity, float
    return sum;
 }
 
+STBPDEF
 float stb_perlin_fbm_noise3(float x, float y, float z, float lacunarity, float gain, int octaves)
 {
    int i;
@@ -307,6 +315,7 @@ float stb_perlin_fbm_noise3(float x, float y, float z, float lacunarity, float g
    return sum;
 }
 
+STBPDEF
 float stb_perlin_turbulence_noise3(float x, float y, float z, float lacunarity, float gain, int octaves)
 {
    int i;
@@ -323,6 +332,7 @@ float stb_perlin_turbulence_noise3(float x, float y, float z, float lacunarity, 
    return sum;
 }
 
+STBPDEF
 float stb_perlin_noise3_wrap_nonpow2(float x, float y, float z, int x_wrap, int y_wrap, int z_wrap, unsigned char seed)
 {
    float u,v,w;

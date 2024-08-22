@@ -64,6 +64,7 @@
     #define TINYOBJ_REALLOC RL_REALLOC
     #define TINYOBJ_FREE RL_FREE
 
+    #define TINYOBJDEF RLAPI_PRIVATE
     #define TINYOBJ_LOADER_C_IMPLEMENTATION
     #include "external/tinyobj_loader_c.h"      // OBJ/MTL file formats loading
 #endif
@@ -72,6 +73,7 @@
     #define CGLTF_MALLOC RL_MALLOC
     #define CGLTF_FREE RL_FREE
 
+    #define CGLTF_DEF RLAPI_PRIVATE
     #define CGLTF_IMPLEMENTATION
     #include "external/cgltf.h"         // glTF file format loading
 #endif
@@ -82,6 +84,7 @@
     #define VOX_REALLOC RL_REALLOC
     #define VOX_FREE RL_FREE
 
+    #define VOXDEF RLAPI_PRIVATE
     #define VOX_LOADER_IMPLEMENTATION
     #include "external/vox_loader.h"    // VOX file format loading (MagikaVoxel)
 #endif
@@ -91,6 +94,7 @@
     #define M3D_REALLOC RL_REALLOC
     #define M3D_FREE RL_FREE
 
+    #define M3D_DEF RLAPI_PRIVATE
     #define M3D_IMPLEMENTATION
     #include "external/m3d.h"           // Model3D file format loading
 #endif

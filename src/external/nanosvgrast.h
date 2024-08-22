@@ -20,12 +20,20 @@
  * The polygon rasterization is heavily based on stb_truetype rasterizer
  * by Sean Barrett - http://nothings.org/
  *
+ * Modifications:
+ *     2024 Listeira monocytogenes -> Added NSVGRAST_DEF macro.
+ *
  */
 
 #ifndef NANOSVGRAST_H
 #define NANOSVGRAST_H
 
 #include "nanosvg.h"
+
+/* default to NSVGDEF */
+#ifndef NSVGRAST_DEF
+# define NSVGRAST_DEF NSVGDEF
+#endif
 
 #ifndef NANOSVGRAST_CPLUSPLUS
 #ifdef __cplusplus
@@ -49,6 +57,7 @@ typedef struct NSVGrasterizer NSVGrasterizer;
 */
 
 // Allocated rasterizer context.
+NSVGRAST_DEF
 NSVGrasterizer* nsvgCreateRasterizer(void);
 
 // Rasterizes SVG image, returns RGBA image (non-premultiplied alpha)
@@ -60,11 +69,13 @@ NSVGrasterizer* nsvgCreateRasterizer(void);
 //   w - width of the image to render
 //   h - height of the image to render
 //   stride - number of bytes per scaleline in the destination buffer
+NSVGRAST_DEF
 void nsvgRasterize(NSVGrasterizer* r,
 				   NSVGimage* image, float tx, float ty, float scale,
 				   unsigned char* dst, int w, int h, int stride);
 
 // Deletes rasterizer context.
+NSVGRAST_DEF
 void nsvgDeleteRasterizer(NSVGrasterizer*);
 
 
@@ -73,6 +84,8 @@ void nsvgDeleteRasterizer(NSVGrasterizer*);
 }
 #endif
 #endif
+
+#endif // NANOSVGRAST_H
 
 #ifdef NANOSVGRAST_IMPLEMENTATION
 
@@ -150,6 +163,7 @@ struct NSVGrasterizer
 	int width, height, stride;
 };
 
+NSVGRAST_DEF
 NSVGrasterizer* nsvgCreateRasterizer(void)
 {
 	NSVGrasterizer* r = (NSVGrasterizer*)malloc(sizeof(NSVGrasterizer));
@@ -166,6 +180,7 @@ error:
 	return NULL;
 }
 
+NSVGRAST_DEF
 void nsvgDeleteRasterizer(NSVGrasterizer* r)
 {
 	NSVGmemPage* p;
@@ -1364,6 +1379,7 @@ static void dumpEdges(NSVGrasterizer* r, const char* name)
 }
 */
 
+NSVGRAST_DEF
 void nsvgRasterize(NSVGrasterizer* r,
 				   NSVGimage* image, float tx, float ty, float scale,
 				   unsigned char* dst, int w, int h, int stride)
@@ -1454,5 +1470,3 @@ void nsvgRasterize(NSVGrasterizer* r,
 }
 
 #endif // NANOSVGRAST_IMPLEMENTATION
-
-#endif // NANOSVGRAST_H

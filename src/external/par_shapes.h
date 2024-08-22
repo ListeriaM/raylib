@@ -26,6 +26,10 @@
 #ifndef PAR_SHAPES_H
 #define PAR_SHAPES_H
 
+#ifndef PAR_SHAPES_DEF
+# define PAR_SHAPES_DEF
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -59,6 +63,7 @@ typedef struct par_shapes_mesh_s {
     float* tcoords;          // Optional list of 2-tuples (U V U V U V...)
 } par_shapes_mesh;
 
+PAR_SHAPES_DEF
 void par_shapes_free_mesh(par_shapes_mesh*);
 
 // Generators ------------------------------------------------------------------
@@ -67,104 +72,135 @@ void par_shapes_free_mesh(par_shapes_mesh*);
 // levels across the UV domain.  Think of "slices" like a number of pizza
 // slices, and "stacks" like a number of stacked rings.  Height and radius are
 // both 1.0, but they can easily be changed with par_shapes_scale.
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_cylinder(int slices, int stacks);
 
 // Cone is similar to cylinder but the radius diminishes to zero as Z increases.
 // Again, height and radius are 1.0, but can be changed with par_shapes_scale.
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_cone(int slices, int stacks);
 
 // Create a disk of radius 1.0 with texture coordinates and normals by squashing
 // a cone flat on the Z=0 plane.
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_parametric_disk(int slices, int stacks);
 
 // Create a donut that sits on the Z=0 plane with the specified inner radius.
 // The outer radius can be controlled with par_shapes_scale.
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_torus(int slices, int stacks, float radius);
 
 // Create a sphere with texture coordinates and small triangles near the poles.
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_parametric_sphere(int slices, int stacks);
 
 // Approximate a sphere with a subdivided icosahedron, which produces a nice
 // distribution of triangles, but no texture coordinates.  Each subdivision
 // level scales the number of triangles by four, so use a very low number.
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_subdivided_sphere(int nsubdivisions);
 
 // More parametric surfaces.
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_klein_bottle(int slices, int stacks);
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_trefoil_knot(int slices, int stacks,
     float radius);
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_hemisphere(int slices, int stacks);
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_plane(int slices, int stacks);
 
 // Create a parametric surface from a callback function that consumes a 2D
 // point in [0,1] and produces a 3D point.
 typedef void (*par_shapes_fn)(float const*, float*, void*);
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_parametric(par_shapes_fn, int slices,
     int stacks, void* userdata);
 
 // Generate points for a 20-sided polyhedron that fits in the unit sphere.
 // Texture coordinates and normals are not generated.
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_icosahedron();
 
 // Generate points for a 12-sided polyhedron that fits in the unit sphere.
 // Again, texture coordinates and normals are not generated.
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_dodecahedron();
 
 // More platonic solids.
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_octahedron();
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_tetrahedron();
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_cube();
 
 // Generate an orientable disk shape in 3-space.  Does not include normals or
 // texture coordinates.
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_disk(float radius, int slices,
     float const* center, float const* normal);
 
 // Create an empty shape.  Useful for building scenes with merge_and_free.
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_empty();
 
 // Generate a rock shape that sits on the Y=0 plane, and sinks into it a bit.
 // This includes smooth normals but no texture coordinates.  Each subdivision
 // level scales the number of triangles by four, so use a very low number.
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_rock(int seed, int nsubdivisions);
 
 // Create trees or vegetation by executing a recursive turtle graphics program.
 // The program is a list of command-argument pairs.  See the unit test for
 // an example.  Texture coordinates and normals are not generated.
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_lsystem(char const* program, int slices,
     int maxdepth);
 
 // Queries ---------------------------------------------------------------------
 
 // Dump out a text file conforming to the venerable OBJ format.
+PAR_SHAPES_DEF
 void par_shapes_export(par_shapes_mesh const*, char const* objfile);
 
 // Take a pointer to 6 floats and set them to min xyz, max xyz.
+PAR_SHAPES_DEF
 void par_shapes_compute_aabb(par_shapes_mesh const* mesh, float* aabb);
 
 // Make a deep copy of a mesh.  To make a brand new copy, pass null to "target".
 // To avoid memory churn, pass an existing mesh to "target".
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_clone(par_shapes_mesh const* mesh,
     par_shapes_mesh* target);
 
 // Transformations -------------------------------------------------------------
 
+PAR_SHAPES_DEF
 void par_shapes_merge(par_shapes_mesh* dst, par_shapes_mesh const* src);
+PAR_SHAPES_DEF
 void par_shapes_translate(par_shapes_mesh*, float x, float y, float z);
+PAR_SHAPES_DEF
 void par_shapes_rotate(par_shapes_mesh*, float radians, float const* axis);
+PAR_SHAPES_DEF
 void par_shapes_scale(par_shapes_mesh*, float x, float y, float z);
+PAR_SHAPES_DEF
 void par_shapes_merge_and_free(par_shapes_mesh* dst, par_shapes_mesh* src);
 
 // Reverse the winding of a run of faces.  Useful when drawing the inside of
 // a Cornell Box.  Pass 0 for nfaces to reverse every face in the mesh.
+PAR_SHAPES_DEF
 void par_shapes_invert(par_shapes_mesh*, int startface, int nfaces);
 
 // Remove all triangles whose area is less than minarea.
+PAR_SHAPES_DEF
 void par_shapes_remove_degenerate(par_shapes_mesh*, float minarea);
 
 // Dereference the entire index buffer and replace the point list.
 // This creates an inefficient structure, but is useful for drawing facets.
 // If create_indices is true, a trivial "0 1 2 3..." index buffer is generated.
+PAR_SHAPES_DEF
 void par_shapes_unweld(par_shapes_mesh* mesh, bool create_indices);
 
 // Merge colocated verts, build a new index buffer, and return the
@@ -172,20 +208,26 @@ void par_shapes_unweld(par_shapes_mesh* mesh, bool create_indices);
 // welding vertices. The mapping argument can be null, or a pointer to
 // npoints integers, which gets filled with the mapping from old vertex
 // indices to new indices.
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_weld(par_shapes_mesh const*, float epsilon,
     PAR_SHAPES_T* mapping);
 
 // Compute smooth normals by averaging adjacent facet normals.
+PAR_SHAPES_DEF
 void par_shapes_compute_normals(par_shapes_mesh* m);
 
 // Global Config ---------------------------------------------------------------
 
+PAR_SHAPES_DEF
 void par_shapes_set_epsilon_welded_normals(float epsilon);
+PAR_SHAPES_DEF
 void par_shapes_set_epsilon_degenerate_sphere(float epsilon);
 
 // Advanced --------------------------------------------------------------------
 
+PAR_SHAPES_DEF
 void par_shapes__compute_welded_normals(par_shapes_mesh* m);
+PAR_SHAPES_DEF
 void par_shapes__connect(par_shapes_mesh* scene, par_shapes_mesh* cylinder,
     int slices);
 
@@ -212,6 +254,7 @@ void par_shapes__connect(par_shapes_mesh* scene, par_shapes_mesh* cylinder,
 // -----------------------------------------------------------------------------
 // END PUBLIC API
 // -----------------------------------------------------------------------------
+#endif // PAR_SHAPES_H
 
 #ifdef PAR_SHAPES_IMPLEMENTATION
 #include <stdlib.h>
@@ -319,6 +362,7 @@ static float par_shapes__sqrdist3(float const* a, float const* b)
     return dx * dx + dy * dy + dz * dz;
 }
 
+PAR_SHAPES_DEF
 void par_shapes__compute_welded_normals(par_shapes_mesh* m)
 {
     const float epsilon = par_shapes__epsilon_welded_normals;
@@ -338,6 +382,7 @@ void par_shapes__compute_welded_normals(par_shapes_mesh* m)
     par_shapes_free_mesh(welded);
 }
 
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_cylinder(int slices, int stacks)
 {
     if (slices < 3 || stacks < 1) {
@@ -347,6 +392,7 @@ par_shapes_mesh* par_shapes_create_cylinder(int slices, int stacks)
         stacks, 0);
 }
 
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_cone(int slices, int stacks)
 {
     if (slices < 3 || stacks < 1) {
@@ -356,6 +402,7 @@ par_shapes_mesh* par_shapes_create_cone(int slices, int stacks)
         stacks, 0);
 }
 
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_parametric_disk(int slices, int stacks)
 {
     par_shapes_mesh* m = par_shapes_create_cone(slices, stacks);
@@ -365,6 +412,7 @@ par_shapes_mesh* par_shapes_create_parametric_disk(int slices, int stacks)
     return m;
 }
 
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_parametric_sphere(int slices, int stacks)
 {
     if (slices < 3 || stacks < 3) {
@@ -376,6 +424,7 @@ par_shapes_mesh* par_shapes_create_parametric_sphere(int slices, int stacks)
     return m;
 }
 
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_hemisphere(int slices, int stacks)
 {
     if (slices < 3 || stacks < 3) {
@@ -387,6 +436,7 @@ par_shapes_mesh* par_shapes_create_hemisphere(int slices, int stacks)
     return m;
 }
 
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_torus(int slices, int stacks, float radius)
 {
     if (slices < 3 || stacks < 3) {
@@ -399,6 +449,7 @@ par_shapes_mesh* par_shapes_create_torus(int slices, int stacks, float radius)
         stacks, userdata);
 }
 
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_klein_bottle(int slices, int stacks)
 {
     if (slices < 3 || stacks < 3) {
@@ -418,6 +469,7 @@ par_shapes_mesh* par_shapes_create_klein_bottle(int slices, int stacks)
     return mesh;
 }
 
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_trefoil_knot(int slices, int stacks,
     float radius)
 {
@@ -431,6 +483,7 @@ par_shapes_mesh* par_shapes_create_trefoil_knot(int slices, int stacks,
         stacks, userdata);
 }
 
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_plane(int slices, int stacks)
 {
     if (slices < 1 || stacks < 1) {
@@ -440,6 +493,7 @@ par_shapes_mesh* par_shapes_create_plane(int slices, int stacks)
         stacks, 0);
 }
 
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_parametric(par_shapes_fn fn,
     int slices, int stacks, void* userdata)
 {
@@ -496,6 +550,7 @@ par_shapes_mesh* par_shapes_create_parametric(par_shapes_fn fn,
     return mesh;
 }
 
+PAR_SHAPES_DEF
 void par_shapes_free_mesh(par_shapes_mesh* mesh)
 {
     PAR_FREE(mesh->points);
@@ -505,6 +560,7 @@ void par_shapes_free_mesh(par_shapes_mesh* mesh)
     PAR_FREE(mesh);
 }
 
+PAR_SHAPES_DEF
 void par_shapes_export(par_shapes_mesh const* mesh, char const* filename)
 {
     FILE* objfile = fopen(filename, "wt");
@@ -669,14 +725,17 @@ static void par_shapes__trefoil(float const* uv, float* xyz, void* userdata)
     xyz[2] = z + d * ww[2] * sin(v);
 }
 
+PAR_SHAPES_DEF
 void par_shapes_set_epsilon_welded_normals(float epsilon) {
     par_shapes__epsilon_welded_normals = epsilon;
 }
 
+PAR_SHAPES_DEF
 void par_shapes_set_epsilon_degenerate_sphere(float epsilon) {
     par_shapes__epsilon_degenerate_sphere = epsilon;
 }
 
+PAR_SHAPES_DEF
 void par_shapes_merge(par_shapes_mesh* dst, par_shapes_mesh const* src)
 {
     PAR_SHAPES_T offset = dst->npoints;
@@ -712,6 +771,7 @@ void par_shapes_merge(par_shapes_mesh* dst, par_shapes_mesh const* src)
     dst->ntriangles = ntriangles;
 }
 
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_disk(float radius, int slices,
     float const* center, float const* normal)
 {
@@ -754,11 +814,13 @@ par_shapes_mesh* par_shapes_create_disk(float radius, int slices,
     return mesh;
 }
 
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_empty()
 {
     return PAR_CALLOC(par_shapes_mesh, 1);
 }
 
+PAR_SHAPES_DEF
 void par_shapes_translate(par_shapes_mesh* m, float x, float y, float z)
 {
     float* points = m->points;
@@ -769,6 +831,7 @@ void par_shapes_translate(par_shapes_mesh* m, float x, float y, float z)
     }
 }
 
+PAR_SHAPES_DEF
 void par_shapes_rotate(par_shapes_mesh* mesh, float radians, float const* axis)
 {
     float s = sinf(radians);
@@ -814,6 +877,7 @@ void par_shapes_rotate(par_shapes_mesh* mesh, float radians, float const* axis)
     }
 }
 
+PAR_SHAPES_DEF
 void par_shapes_scale(par_shapes_mesh* m, float x, float y, float z)
 {
     float* points = m->points;
@@ -845,12 +909,14 @@ void par_shapes_scale(par_shapes_mesh* m, float x, float y, float z)
     }
 }
 
+PAR_SHAPES_DEF
 void par_shapes_merge_and_free(par_shapes_mesh* dst, par_shapes_mesh* src)
 {
     par_shapes_merge(dst, src);
     par_shapes_free_mesh(src);
 }
 
+PAR_SHAPES_DEF
 void par_shapes_compute_aabb(par_shapes_mesh const* m, float* aabb)
 {
     float* points = m->points;
@@ -868,6 +934,7 @@ void par_shapes_compute_aabb(par_shapes_mesh const* m, float* aabb)
     }
 }
 
+PAR_SHAPES_DEF
 void par_shapes_invert(par_shapes_mesh* m, int face, int nfaces)
 {
     nfaces = nfaces ? nfaces : m->ntriangles;
@@ -878,6 +945,7 @@ void par_shapes_invert(par_shapes_mesh* m, int face, int nfaces)
     }
 }
 
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_icosahedron()
 {
     static float verts[] = {
@@ -926,6 +994,7 @@ par_shapes_mesh* par_shapes_create_icosahedron()
     return mesh;
 }
 
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_dodecahedron()
 {
     static float verts[20 * 3] = {
@@ -988,6 +1057,7 @@ par_shapes_mesh* par_shapes_create_dodecahedron()
     return mesh;
 }
 
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_octahedron()
 {
     static float verts[6 * 3] = {
@@ -1026,6 +1096,7 @@ par_shapes_mesh* par_shapes_create_octahedron()
     return mesh;
 }
 
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_tetrahedron()
 {
     static float verts[4 * 3] = {
@@ -1058,6 +1129,7 @@ par_shapes_mesh* par_shapes_create_tetrahedron()
     return mesh;
 }
 
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_cube()
 {
     static float verts[8 * 3] = {
@@ -1176,6 +1248,7 @@ static par_shapes_mesh* par_shapes__apply_turtle(par_shapes_mesh* mesh,
     return m;
 }
 
+PAR_SHAPES_DEF
 void par_shapes__connect(par_shapes_mesh* scene, par_shapes_mesh* cylinder,
     int slices)
 {
@@ -1219,6 +1292,7 @@ void par_shapes__connect(par_shapes_mesh* scene, par_shapes_mesh* cylinder,
     scene->ntriangles = ntriangles;
 }
 
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_lsystem(char const* text, int slices,
     int maxdepth)
 {
@@ -1410,6 +1484,7 @@ par_shapes_mesh* par_shapes_create_lsystem(char const* text, int slices,
     return scene;
 }
 
+PAR_SHAPES_DEF
 void par_shapes_unweld(par_shapes_mesh* mesh, bool create_indices)
 {
     int npoints = mesh->ntriangles * 3;
@@ -1436,6 +1511,7 @@ void par_shapes_unweld(par_shapes_mesh* mesh, bool create_indices)
     }
 }
 
+PAR_SHAPES_DEF
 void par_shapes_compute_normals(par_shapes_mesh* m)
 {
     PAR_FREE(m->normals);
@@ -1505,6 +1581,7 @@ static void par_shapes__subdivide(par_shapes_mesh* mesh)
     mesh->ntriangles = ntriangles;
 }
 
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_subdivided_sphere(int nsubd)
 {
     par_shapes_mesh* mesh = par_shapes_create_icosahedron();
@@ -1528,6 +1605,7 @@ par_shapes_mesh* par_shapes_create_subdivided_sphere(int nsubd)
     return mesh;
 }
 
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_create_rock(int seed, int subd)
 {
     par_shapes_mesh* mesh = par_shapes_create_subdivided_sphere(subd);
@@ -1551,6 +1629,7 @@ par_shapes_mesh* par_shapes_create_rock(int seed, int subd)
     return mesh;
 }
 
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_clone(par_shapes_mesh const* mesh,
     par_shapes_mesh* clone)
 {
@@ -1790,6 +1869,7 @@ static void par_shapes__weld_points(par_shapes_mesh* mesh, int gridsize,
     mesh->ntriangles = ntriangles;
 }
 
+PAR_SHAPES_DEF
 par_shapes_mesh* par_shapes_weld(par_shapes_mesh const* mesh, float epsilon,
     PAR_SHAPES_T* weldmap)
 {
@@ -2099,6 +2179,7 @@ static double par__simplex_noise2(struct osn_context* ctx, double x, double y)
     return value / NORM_CONSTANT_2D;
 }
 
+PAR_SHAPES_DEF
 void par_shapes_remove_degenerate(par_shapes_mesh* mesh, float mintriarea)
 {
     int ntriangles = 0;
@@ -2130,7 +2211,6 @@ void par_shapes_remove_degenerate(par_shapes_mesh* mesh, float mintriarea)
 }
 
 #endif // PAR_SHAPES_IMPLEMENTATION
-#endif // PAR_SHAPES_H
 
 // par_shapes is distributed under the MIT license:
 //

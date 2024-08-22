@@ -22,6 +22,10 @@
 #ifndef DIRENT_H
 #define DIRENT_H
 
+#ifndef DIRENT_DEF
+# define DIRENT_DEF
+#endif
+
 // Allow custom memory allocators
 #ifndef DIRENT_MALLOC
     #define DIRENT_MALLOC(sz)   malloc(sz)
@@ -48,9 +52,13 @@ extern "C" {
 //------------------------------------------------------------------------------------
 // Functions Declaration
 //------------------------------------------------------------------------------------
+DIRENT_DEF
 DIR *opendir(const char *name);
+DIRENT_DEF
 int closedir(DIR *dir);
+DIRENT_DEF
 struct dirent *readdir(DIR *dir);
+DIRENT_DEF
 void rewinddir(DIR *dir);
 
 #ifdef __cplusplus
@@ -97,6 +105,7 @@ struct DIR {
     char *name;                 // null-terminated char string
 };
 
+DIRENT_DEF
 DIR *opendir(const char *name)
 {
     DIR *dir = 0;
@@ -136,6 +145,7 @@ DIR *opendir(const char *name)
     return dir;
 }
 
+DIRENT_DEF
 int closedir(DIR *dir)
 {
     int result = -1;
@@ -154,6 +164,7 @@ int closedir(DIR *dir)
     return result;
 }
 
+DIRENT_DEF
 struct dirent *readdir(DIR *dir)
 {
     struct dirent *result = 0;
@@ -171,6 +182,7 @@ struct dirent *readdir(DIR *dir)
     return result;
 }
 
+DIRENT_DEF
 void rewinddir(DIR *dir)
 {
     if (dir && dir->handle != -1)

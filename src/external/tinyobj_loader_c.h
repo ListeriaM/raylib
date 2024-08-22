@@ -24,6 +24,10 @@
 #ifndef TINOBJ_LOADER_C_H_
 #define TINOBJ_LOADER_C_H_
 
+#ifndef TINYOBJDEF
+# define TINYOBJDEF
+#endif
+
 /* @todo { Remove stddef dependency. unsigned int? } ---> RAY: DONE. */
 //#include <stddef.h>
 
@@ -92,19 +96,21 @@ typedef struct {
  * Returns TINYOBJ_SUCCESS if things goes well.
  * Returns TINYOBJ_ERR_*** when there is an error.
  */
-extern int tinyobj_parse_obj(tinyobj_attrib_t *attrib, tinyobj_shape_t **shapes,
-                             unsigned int *num_shapes, tinyobj_material_t **materials,
-                             unsigned int *num_materials, const char *buf, unsigned int len,
-                             unsigned int flags);
-extern int tinyobj_parse_mtl_file(tinyobj_material_t **materials_out,
-                                  unsigned int *num_materials_out,
-                                  const char *filename);
+TINYOBJDEF int tinyobj_parse_obj(tinyobj_attrib_t *attrib, tinyobj_shape_t **shapes,
+                                 unsigned int *num_shapes, tinyobj_material_t **materials,
+                                 unsigned int *num_materials, const char *buf, unsigned int len,
+                                 unsigned int flags);
+TINYOBJDEF int tinyobj_parse_mtl_file(tinyobj_material_t **materials_out,
+                                      unsigned int *num_materials_out,
+                                      const char *filename);
 
-extern void tinyobj_attrib_init(tinyobj_attrib_t *attrib);
-extern void tinyobj_attrib_free(tinyobj_attrib_t *attrib);
-extern void tinyobj_shapes_free(tinyobj_shape_t *shapes, unsigned int num_shapes);
-extern void tinyobj_materials_free(tinyobj_material_t *materials,
-                                   unsigned int num_materials);
+TINYOBJDEF void tinyobj_attrib_init(tinyobj_attrib_t *attrib);
+TINYOBJDEF void tinyobj_attrib_free(tinyobj_attrib_t *attrib);
+TINYOBJDEF void tinyobj_shapes_free(tinyobj_shape_t *shapes, unsigned int num_shapes);
+TINYOBJDEF void tinyobj_materials_free(tinyobj_material_t *materials,
+                                       unsigned int num_materials);
+
+#endif /* TINOBJ_LOADER_C_H_ */
 
 #ifdef TINYOBJ_LOADER_C_IMPLEMENTATION
 #include <stdio.h>
@@ -494,7 +500,7 @@ static char *my_strndup(const char *s, unsigned int len) {
   return d;
 }
 
-char *dynamic_fgets(char **buf, unsigned int *size, FILE *file) {
+static char *dynamic_fgets(char **buf, unsigned int *size, FILE *file) {
   char *offset;
   char *ret;
   unsigned int old_size;
@@ -966,6 +972,7 @@ static int tinyobj_parse_and_index_mtl_file(tinyobj_material_t **materials_out,
   return TINYOBJ_SUCCESS;
 }
 
+TINYOBJDEF
 int tinyobj_parse_mtl_file(tinyobj_material_t **materials_out,
                            unsigned int *num_materials_out,
                            const char *filename) {
@@ -1207,6 +1214,7 @@ static int is_line_ending(const char *p, unsigned int i, unsigned int end_i) {
   return 0;
 }
 
+TINYOBJDEF
 int tinyobj_parse_obj(tinyobj_attrib_t *attrib, tinyobj_shape_t **shapes,
                       unsigned int *num_shapes, tinyobj_material_t **materials_out,
                       unsigned int *num_materials_out, const char *buf, unsigned int len,
@@ -1535,6 +1543,7 @@ int tinyobj_parse_obj(tinyobj_attrib_t *attrib, tinyobj_shape_t **shapes,
   return TINYOBJ_SUCCESS;
 }
 
+TINYOBJDEF
 void tinyobj_attrib_init(tinyobj_attrib_t *attrib) {
   attrib->vertices = NULL;
   attrib->num_vertices = 0;
@@ -1549,6 +1558,7 @@ void tinyobj_attrib_init(tinyobj_attrib_t *attrib) {
   attrib->material_ids = NULL;
 }
 
+TINYOBJDEF
 void tinyobj_attrib_free(tinyobj_attrib_t *attrib) {
   if (attrib->vertices) TINYOBJ_FREE(attrib->vertices);
   if (attrib->normals) TINYOBJ_FREE(attrib->normals);
@@ -1558,6 +1568,7 @@ void tinyobj_attrib_free(tinyobj_attrib_t *attrib) {
   if (attrib->material_ids) TINYOBJ_FREE(attrib->material_ids);
 }
 
+TINYOBJDEF
 void tinyobj_shapes_free(tinyobj_shape_t *shapes, unsigned int num_shapes) {
   unsigned int i;
   if (shapes == NULL) return;
@@ -1569,6 +1580,7 @@ void tinyobj_shapes_free(tinyobj_shape_t *shapes, unsigned int num_shapes) {
   TINYOBJ_FREE(shapes);
 }
 
+TINYOBJDEF
 void tinyobj_materials_free(tinyobj_material_t *materials,
                             unsigned int num_materials) {
   unsigned int i;
@@ -1590,5 +1602,3 @@ void tinyobj_materials_free(tinyobj_material_t *materials,
   TINYOBJ_FREE(materials);
 }
 #endif /* TINYOBJ_LOADER_C_IMPLEMENTATION */
-
-#endif /* TINOBJ_LOADER_C_H_ */

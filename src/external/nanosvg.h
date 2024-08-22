@@ -24,10 +24,17 @@
  *
  * Bounding box calculation based on http://blog.hackers-cafe.net/2009/06/how-to-calculate-bezier-curves-bounding.html
  *
+ * Modifications:
+ *     2024 Listeira monocytogenes -> Added NSVGDEF macro.
+ *
  */
 
 #ifndef NANOSVG_H
 #define NANOSVG_H
+
+#ifndef NSVGDEF
+# define NSVGDEF
+#endif
 
 #ifndef NANOSVG_CPLUSPLUS
 #ifdef __cplusplus
@@ -163,16 +170,20 @@ typedef struct NSVGimage
 } NSVGimage;
 
 // Parses SVG file from a file, returns SVG image as paths.
+NSVGDEF
 NSVGimage* nsvgParseFromFile(const char* filename, const char* units, float dpi);
 
 // Parses SVG file from a null terminated string, returns SVG image as paths.
 // Important note: changes the string.
+NSVGDEF
 NSVGimage* nsvgParse(char* input, const char* units, float dpi);
 
 // Duplicates a path.
+NSVGDEF
 NSVGpath* nsvgDuplicatePath(NSVGpath* p);
 
 // Deletes an image.
+NSVGDEF
 void nsvgDelete(NSVGimage* image);
 
 #ifndef NANOSVG_CPLUSPLUS
@@ -180,6 +191,8 @@ void nsvgDelete(NSVGimage* image);
 }
 #endif
 #endif
+
+#endif // NANOSVG_H
 
 #ifdef NANOSVG_IMPLEMENTATION
 
@@ -322,6 +335,7 @@ static void nsvg__parseElement(char* s,
 		(*endelCb)(ud, name);
 }
 
+static
 int nsvg__parseXML(char* input,
 				   void (*startelCb)(void* ud, const char* el, const char** attr),
 				   void (*endelCb)(void* ud, const char* el),
@@ -1281,6 +1295,7 @@ typedef struct NSVGNamedColor {
 	unsigned int color;
 } NSVGNamedColor;
 
+static
 NSVGNamedColor nsvg__colors[] = {
 
 	{ "red", NSVG_RGB(255, 0, 0) },
@@ -2949,6 +2964,7 @@ static void nsvg__scaleToViewbox(NSVGparser* p, const char* units)
 	}
 }
 
+NSVGDEF
 NSVGimage* nsvgParse(char* input, const char* units, float dpi)
 {
 	NSVGparser* p;
@@ -2973,6 +2989,7 @@ NSVGimage* nsvgParse(char* input, const char* units, float dpi)
 	return ret;
 }
 
+NSVGDEF
 NSVGimage* nsvgParseFromFile(const char* filename, const char* units, float dpi)
 {
 	FILE* fp = NULL;
@@ -3002,6 +3019,7 @@ error:
 	return NULL;
 }
 
+NSVGDEF
 NSVGpath* nsvgDuplicatePath(NSVGpath* p)
 {
     NSVGpath* res = NULL;
@@ -3032,6 +3050,7 @@ error:
     return NULL;
 }
 
+NSVGDEF
 void nsvgDelete(NSVGimage* image)
 {
 	NSVGshape *snext, *shape;
@@ -3049,5 +3068,3 @@ void nsvgDelete(NSVGimage* image)
 }
 
 #endif // NANOSVG_IMPLEMENTATION
-
-#endif // NANOSVG_H

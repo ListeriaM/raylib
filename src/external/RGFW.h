@@ -4498,7 +4498,7 @@ static int anonymous_shm_open(void) {
 	return -1;
 }
 
-int create_shm_file(off_t size) {
+static int create_shm_file(off_t size) {
 	int fd = anonymous_shm_open();
 	if (fd < 0) {
 		return fd;

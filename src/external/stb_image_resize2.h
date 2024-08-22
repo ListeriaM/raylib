@@ -8668,7 +8668,7 @@ static void STBIR__CODER_NAME(stbir__decode_uint8_srgb)( float * decodep, int wi
     stbir__simdi_32shr( i, i, 16 ); \
 }
 
-#define stbir__simdi_table_lookup2( v0,v1, table ) \
+#define stbir__simdi_table_lookup2( v0,v1, table, off ) \
 { \
   stbir__simdi_u32 temp0,temp1; \
   temp0.m128i_i128 = v0; \
@@ -8693,17 +8693,17 @@ static void STBIR__CODER_NAME(stbir__decode_uint8_srgb)( float * decodep, int wi
   v2 = temp2.m128i_i128; \
 }
 
-#define stbir__simdi_table_lookup4( v0,v1,v2,v3, table ) \
+#define stbir__simdi_table_lookup4( v0,v1,v2,v3, table, off ) \
 { \
   stbir__simdi_u32 temp0,temp1,temp2,temp3; \
   temp0.m128i_i128 = v0; \
   temp1.m128i_i128 = v1; \
   temp2.m128i_i128 = v2; \
   temp3.m128i_i128 = v3; \
-  temp0.m128i_u32[0] = table[temp0.m128i_i32[0]]; temp0.m128i_u32[1] = table[temp0.m128i_i32[1]]; temp0.m128i_u32[2] = table[temp0.m128i_i32[2]]; temp0.m128i_u32[3] = table[temp0.m128i_i32[3]]; \
-  temp1.m128i_u32[0] = table[temp1.m128i_i32[0]]; temp1.m128i_u32[1] = table[temp1.m128i_i32[1]]; temp1.m128i_u32[2] = table[temp1.m128i_i32[2]]; temp1.m128i_u32[3] = table[temp1.m128i_i32[3]]; \
-  temp2.m128i_u32[0] = table[temp2.m128i_i32[0]]; temp2.m128i_u32[1] = table[temp2.m128i_i32[1]]; temp2.m128i_u32[2] = table[temp2.m128i_i32[2]]; temp2.m128i_u32[3] = table[temp2.m128i_i32[3]]; \
-  temp3.m128i_u32[0] = table[temp3.m128i_i32[0]]; temp3.m128i_u32[1] = table[temp3.m128i_i32[1]]; temp3.m128i_u32[2] = table[temp3.m128i_i32[2]]; temp3.m128i_u32[3] = table[temp3.m128i_i32[3]]; \
+  temp0.m128i_u32[0] = table[temp0.m128i_i32[0]+off]; temp0.m128i_u32[1] = table[temp0.m128i_i32[1]+off]; temp0.m128i_u32[2] = table[temp0.m128i_i32[2]+off]; temp0.m128i_u32[3] = table[temp0.m128i_i32[3]+off]; \
+  temp1.m128i_u32[0] = table[temp1.m128i_i32[0]+off]; temp1.m128i_u32[1] = table[temp1.m128i_i32[1]+off]; temp1.m128i_u32[2] = table[temp1.m128i_i32[2]+off]; temp1.m128i_u32[3] = table[temp1.m128i_i32[3]+off]; \
+  temp2.m128i_u32[0] = table[temp2.m128i_i32[0]+off]; temp2.m128i_u32[1] = table[temp2.m128i_i32[1]+off]; temp2.m128i_u32[2] = table[temp2.m128i_i32[2]+off]; temp2.m128i_u32[3] = table[temp2.m128i_i32[3]+off]; \
+  temp3.m128i_u32[0] = table[temp3.m128i_i32[0]+off]; temp3.m128i_u32[1] = table[temp3.m128i_i32[1]+off]; temp3.m128i_u32[2] = table[temp3.m128i_i32[2]+off]; temp3.m128i_u32[3] = table[temp3.m128i_i32[3]+off]; \
   v0 = temp0.m128i_i128; \
   v1 = temp1.m128i_i128; \
   v2 = temp2.m128i_i128; \
