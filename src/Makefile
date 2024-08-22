@@ -121,10 +121,6 @@ SDL_INCLUDE_PATH      ?= $(RAYLIB_SRC_PATH)/external/SDL2/include
 SDL_LIBRARY_PATH      ?= $(RAYLIB_SRC_PATH)/external/SDL2/lib
 SDL_LIBRARIES         ?= -lSDL2 -lSDL2main
 
-# Determine if the file has root access (only required to install raylib)
-# "whoami" prints the name of the user that calls him (so, if it is the root user, "whoami" prints "root")
-ROOT = $(shell whoami)
-
 # By default we suppose we are working on Windows
 HOST_PLATFORM_OS ?= WINDOWS
 PLATFORM_OS ?= WINDOWS
@@ -824,62 +820,50 @@ RAYLIB_INSTALL_PATH ?= $(DESTDIR)/lib
 RAYLIB_H_INSTALL_PATH ?= $(DESTDIR)/include
 
 install :
-ifeq ($(ROOT),root)
-    ifeq ($(PLATFORM_OS),LINUX)
-        # Attention! You are root, writing files to $(RAYLIB_INSTALL_PATH)
-        # and $(RAYLIB_H_INSTALL_PATH). Consult this Makefile for more information.
-        # Prepare the environment as needed.
-		mkdir --parents --verbose $(RAYLIB_INSTALL_PATH)
-		mkdir --parents --verbose $(RAYLIB_H_INSTALL_PATH)
-        ifeq ($(RAYLIB_LIBTYPE),SHARED)
-            # Installing raylib to $(RAYLIB_INSTALL_PATH).
-			cp --update --verbose $(RAYLIB_RELEASE_PATH)/libraylib.so.$(RAYLIB_VERSION) $(RAYLIB_INSTALL_PATH)/lib$(RAYLIB_LIB_NAME).so.$(RAYLIB_VERSION)
-			cd $(RAYLIB_INSTALL_PATH); ln -fsv lib$(RAYLIB_LIB_NAME).so.$(RAYLIB_VERSION) lib$(RAYLIB_LIB_NAME).so.$(RAYLIB_API_VERSION)
-			cd $(RAYLIB_INSTALL_PATH); ln -fsv lib$(RAYLIB_LIB_NAME).so.$(RAYLIB_API_VERSION) lib$(RAYLIB_LIB_NAME).so
-            # Uncomment to update the runtime linker cache with RAYLIB_INSTALL_PATH.
-            # Not necessary if later embedding RPATH in your executable. See examples/Makefile.
-			ldconfig $(RAYLIB_INSTALL_PATH)
-        else
-            # Installing raylib to $(RAYLIB_INSTALL_PATH).
-			cp --update --verbose $(RAYLIB_RELEASE_PATH)/lib$(RAYLIB_LIB_NAME).a $(RAYLIB_INSTALL_PATH)/lib$(RAYLIB_LIB_NAME).a
-        endif
-        # Copying raylib development files to $(RAYLIB_H_INSTALL_PATH).
-		cp --update raylib.h $(RAYLIB_H_INSTALL_PATH)/raylib.h
-		cp --update raymath.h $(RAYLIB_H_INSTALL_PATH)/raymath.h
-		cp --update rlgl.h $(RAYLIB_H_INSTALL_PATH)/rlgl.h
-		@echo "raylib development files installed/updated!"
+ifeq ($(PLATFORM_OS),LINUX)
+    # Prepare the environment as needed.
+	mkdir --parents --verbose $(RAYLIB_INSTALL_PATH)
+	mkdir --parents --verbose $(RAYLIB_H_INSTALL_PATH)
+    ifeq ($(RAYLIB_LIBTYPE),SHARED)
+        # Installing raylib to $(RAYLIB_INSTALL_PATH).
+		cp --update --verbose $(RAYLIB_RELEASE_PATH)/libraylib.so.$(RAYLIB_VERSION) $(RAYLIB_INSTALL_PATH)/lib$(RAYLIB_LIB_NAME).so.$(RAYLIB_VERSION)
+		cd $(RAYLIB_INSTALL_PATH); ln -fsv lib$(RAYLIB_LIB_NAME).so.$(RAYLIB_VERSION) lib$(RAYLIB_LIB_NAME).so.$(RAYLIB_API_VERSION)
+		cd $(RAYLIB_INSTALL_PATH); ln -fsv lib$(RAYLIB_LIB_NAME).so.$(RAYLIB_API_VERSION) lib$(RAYLIB_LIB_NAME).so
+        # Uncomment to update the runtime linker cache with RAYLIB_INSTALL_PATH.
+        # Not necessary if later embedding RPATH in your executable. See examples/Makefile.
+		# ldconfig $(RAYLIB_INSTALL_PATH)
     else
-		@echo "This function currently works on GNU/Linux systems. Add yours today (^;"
+        # Installing raylib to $(RAYLIB_INSTALL_PATH).
+		cp --update --verbose $(RAYLIB_RELEASE_PATH)/lib$(RAYLIB_LIB_NAME).a $(RAYLIB_INSTALL_PATH)/lib$(RAYLIB_LIB_NAME).a
     endif
+    # Copying raylib development files to $(RAYLIB_H_INSTALL_PATH).
+	cp --update raylib.h $(RAYLIB_H_INSTALL_PATH)/raylib.h
+	cp --update raymath.h $(RAYLIB_H_INSTALL_PATH)/raymath.h
+	cp --update rlgl.h $(RAYLIB_H_INSTALL_PATH)/rlgl.h
+	@echo "raylib development files installed/updated!"
 else
-	@echo "ERROR: Root permissions needed for installation. Try sudo make install" && exit 1
+	@echo "This function currently works on GNU/Linux systems. Add yours today (^;"
 endif
 
 # Remove raylib dev files installed on the system
 # NOTE: see 'install' target.
 uninstall :
-ifeq ($(ROOT),root)
-    # WARNING: You are root, about to delete items from $(RAYLIB_INSTALL_PATH).
-    # and $(RAYLIB_H_INSTALL_PATH). Please confirm each item.
-    ifeq ($(PLATFORM_OS),LINUX)
-        ifeq ($(RAYLIB_LIBTYPE),SHARED)
-			rm --force --interactive --verbose $(RAYLIB_INSTALL_PATH)/libraylib.so
-			rm --force --interactive --verbose $(RAYLIB_INSTALL_PATH)/libraylib.so.$(RAYLIB_API_VERSION)
-			rm --force --interactive --verbose $(RAYLIB_INSTALL_PATH)/libraylib.so.$(RAYLIB_VERSION)
-            # Uncomment to clean up the runtime linker cache. See install target.
-			ldconfig
-        else
-			rm --force --interactive --verbose $(RAYLIB_INSTALL_PATH)/libraylib.a
-        endif
-		rm --force --interactive --verbose $(RAYLIB_H_INSTALL_PATH)/raylib.h
-		rm --force --interactive --verbose $(RAYLIB_H_INSTALL_PATH)/raymath.h
-		rm --force --interactive --verbose $(RAYLIB_H_INSTALL_PATH)/rlgl.h
-		@echo "raylib development files removed!"
+ifeq ($(PLATFORM_OS),LINUX)
+    ifeq ($(RAYLIB_LIBTYPE),SHARED)
+		rm --force --interactive --verbose $(RAYLIB_INSTALL_PATH)/libraylib.so
+		rm --force --interactive --verbose $(RAYLIB_INSTALL_PATH)/libraylib.so.$(RAYLIB_API_VERSION)
+		rm --force --interactive --verbose $(RAYLIB_INSTALL_PATH)/libraylib.so.$(RAYLIB_VERSION)
+        # Uncomment to clean up the runtime linker cache. See install target.
+		# ldconfig
     else
-		@echo "This function currently works on GNU/Linux systems. Add yours today (^;"
+		rm --force --interactive --verbose $(RAYLIB_INSTALL_PATH)/libraylib.a
     endif
+	rm --force --interactive --verbose $(RAYLIB_H_INSTALL_PATH)/raylib.h
+	rm --force --interactive --verbose $(RAYLIB_H_INSTALL_PATH)/raymath.h
+	rm --force --interactive --verbose $(RAYLIB_H_INSTALL_PATH)/rlgl.h
+	@echo "raylib development files removed!"
 else
-	@echo "ERROR: Root permissions needed for uninstallation. Try sudo make uninstall" && exit 1
+	@echo "This function currently works on GNU/Linux systems. Add yours today (^;"
 endif
 
 .PHONY: clean_shell_cmd clean_shell_sh
