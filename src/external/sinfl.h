@@ -112,6 +112,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef SINFL_H_INCLUDED
 #define SINFL_H_INCLUDED
 
+#ifndef SINFL_DEF
+# define SINFL_DEF
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -129,8 +133,8 @@ struct sinfl {
   unsigned lits[SINFL_LIT_TBL_SIZE];
   unsigned dsts[SINFL_OFF_TBL_SIZE];
 };
-extern int sinflate(void *out, int cap, const void *in, int size);
-extern int zsinflate(void *out, int cap, const void *in, int size);
+SINFL_DEF int sinflate(void *out, int cap, const void *in, int size);
+SINFL_DEF int zsinflate(void *out, int cap, const void *in, int size);
 
 #ifdef __cplusplus
 }
@@ -582,7 +586,7 @@ sinfl_decompress(unsigned char *out, int cap, const unsigned char *in, int size)
   }
   return (int)(out-o);
 }
-extern int
+SINFL_DEF int
 sinflate(void *out, int cap, const void *in, int size) {
   return sinfl_decompress((unsigned char*)out, cap, (const unsigned char*)in, size);
 }
@@ -613,7 +617,7 @@ sinfl_adler32(unsigned adler32, const unsigned char *in, int in_len) {
     blk_len = 5552;
   } return (unsigned)(s2 << 16) + (unsigned)s1;
 }
-extern int
+SINFL_DEF int
 zsinflate(void *out, int cap, const void *mem, int size) {
   const unsigned char *in = (const unsigned char*)mem;
   if (size >= 6) {

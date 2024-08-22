@@ -149,6 +149,7 @@
         #define STBI_NO_SIMD
     #endif
 
+    #define STBIDEF RLAPI_PRIVATE
     #define STB_IMAGE_IMPLEMENTATION
     #include "external/stb_image.h"         // Required for: stbi_load_from_file()
                                             // NOTE: Used to read image data (multiple formats support)
@@ -190,6 +191,7 @@
         #pragma warning(disable : 4267)
     #endif
 
+    #define QOIDEF RLAPI_PRIVATE
     #define QOI_IMPLEMENTATION
     #include "external/qoi.h"
 
@@ -204,11 +206,14 @@
     #define STBIW_FREE RL_FREE
     #define STBIW_REALLOC RL_REALLOC
 
+    #define STBIWDEF RLAPI_PRIVATE
+    #define STB_IMAGE_WRITE_STATIC
     #define STB_IMAGE_WRITE_IMPLEMENTATION
     #include "external/stb_image_write.h"   // Required for: stbi_write_*()
 #endif
 
 #if defined(SUPPORT_IMAGE_GENERATION)
+    #define STBPDEF RLAPI_PRIVATE
     #define STB_PERLIN_IMPLEMENTATION
     #include "external/stb_perlin.h"        // Required for: stb_perlin_fbm_noise3
 #endif
@@ -224,6 +229,7 @@
 #if defined(__TINYC__)
     #define STBIR_NO_SIMD
 #endif
+#define STBIRDEF RLAPI_PRIVATE
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
 #include "external/stb_image_resize2.h"     // Required for: stbir_resize_uint8_linear() [ImageResize()]
 

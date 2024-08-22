@@ -175,6 +175,7 @@ typedef struct tagBITMAPINFOHEADER {
 // Threading model: Default: [0] COINIT_MULTITHREADED: COM calls objects on any thread (free threading)
 #define MA_COINIT_VALUE  2              // [2] COINIT_APARTMENTTHREADED: Each object has its own thread (apartment model)
 
+#define MA_API RLAPI_PRIVATE
 #define MINIAUDIO_IMPLEMENTATION
 //#define MA_DEBUG_OUTPUT
 #include "external/miniaudio.h"         // Audio device initialization and management
@@ -209,12 +210,15 @@ typedef struct tagBITMAPINFOHEADER {
     #define DRWAV_REALLOC RL_REALLOC
     #define DRWAV_FREE RL_FREE
 
+    #define DRWAV_API RLAPI_PRIVATE
+    #define DRWAV_PRIVATE static
     #define DR_WAV_IMPLEMENTATION
     #include "external/dr_wav.h"        // WAV loading functions
 #endif
 
 #if defined(SUPPORT_FILEFORMAT_OGG)
     // TODO: Remap stb_vorbis malloc()/free() calls to RL_MALLOC/RL_FREE
+    #define STBVDEF RLAPI_PRIVATE
     #include "external/stb_vorbis.c"    // OGG loading functions
 #endif
 
@@ -223,6 +227,8 @@ typedef struct tagBITMAPINFOHEADER {
     #define DRMP3_REALLOC RL_REALLOC
     #define DRMP3_FREE RL_FREE
 
+    #define DRMP3_API RLAPI_PRIVATE
+    #define DRMP3_PRIVATE static
     #define DR_MP3_IMPLEMENTATION
     #include "external/dr_mp3.h"        // MP3 loading functions
 #endif
@@ -238,8 +244,10 @@ typedef struct tagBITMAPINFOHEADER {
         #pragma warning(disable : 4244)
     #endif
 
+    #define QOADEF RLAPI_PRIVATE
     #define QOA_IMPLEMENTATION
     #include "external/qoa.h"           // QOA loading and saving functions
+    #define QOAPLAYDEF RLAPI_PRIVATE
     #include "external/qoaplay.c"       // QOA stream playing helper functions
 
     #if defined(_MSC_VER)
@@ -252,6 +260,8 @@ typedef struct tagBITMAPINFOHEADER {
     #define DRFLAC_REALLOC RL_REALLOC
     #define DRFLAC_FREE RL_FREE
 
+    #define DRFLAC_API RLAPI_PRIVATE
+    #define DRFLAC_PRIVATE static
     #define DR_FLAC_IMPLEMENTATION
     #define DR_FLAC_NO_WIN32_IO
     #include "external/dr_flac.h"       // FLAC loading functions
@@ -266,6 +276,7 @@ typedef struct tagBITMAPINFOHEADER {
         #pragma warning(disable : 4244)
     #endif
 
+    #define JAR_XM_DEF RLAPI_PRIVATE
     #define JAR_XM_IMPLEMENTATION
     #include "external/jar_xm.h"        // XM loading functions
 
@@ -278,6 +289,7 @@ typedef struct tagBITMAPINFOHEADER {
     #define JARMOD_MALLOC RL_MALLOC
     #define JARMOD_FREE RL_FREE
 
+    #define JAR_MOD_DEF RLAPI_PRIVATE
     #define JAR_MOD_IMPLEMENTATION
     #include "external/jar_mod.h"       // MOD loading functions
 #endif

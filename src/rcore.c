@@ -132,15 +132,18 @@
 #endif
 
 #if defined(SUPPORT_COMPRESSION_API)
+    #define SINFL_DEF RLAPI_PRIVATE
     #define SINFL_IMPLEMENTATION
     #define SINFL_NO_SIMD
     #include "external/sinfl.h"     // Deflate (RFC 1951) decompressor
 
+    #define SDEFL_DEF RLAPI_PRIVATE
     #define SDEFL_IMPLEMENTATION
     #include "external/sdefl.h"     // Deflate (RFC 1951) compressor
 #endif
 
 #if defined(SUPPORT_RPRAND_GENERATOR)
+    #define RPRANDAPI RLAPI_PRIVATE
     #define RPRAND_IMPLEMENTATION
     #include "external/rprand.h"
 #endif
@@ -189,6 +192,7 @@ __declspec(dllimport) unsigned int __stdcall timeEndPeriod(unsigned int uPeriod)
     #define DIRENT_MALLOC RL_MALLOC
     #define DIRENT_FREE RL_FREE
 
+    #define DIRENT_DEF RLAPI_PRIVATE
     #include "external/dirent.h"    // Required for: DIR, opendir(), closedir() [Used in LoadDirectoryFiles()]
 #else
     #include <dirent.h>             // Required for: DIR, opendir(), closedir() [Used in LoadDirectoryFiles()]

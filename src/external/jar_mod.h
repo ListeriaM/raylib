@@ -81,6 +81,10 @@
 #ifndef INCLUDE_JAR_MOD_H
 #define INCLUDE_JAR_MOD_H
 
+#ifndef JAR_MOD_DEF
+# define JAR_MOD_DEF
+#endif
+
 // Allow custom memory allocators
 #ifndef JARMOD_MALLOC
     #define JARMOD_MALLOC(sz)    malloc(sz)
@@ -242,19 +246,30 @@ typedef struct jar_mod_tracker_buffer_state_
 extern "C" {
 #endif
 
+JAR_MOD_DEF
 bool   jar_mod_init(jar_mod_context_t * modctx);
+JAR_MOD_DEF
 bool   jar_mod_setcfg(jar_mod_context_t * modctx, int samplerate, int bits, int stereo, int stereo_separation, int filter);
+JAR_MOD_DEF
 void   jar_mod_fillbuffer(jar_mod_context_t * modctx, short * outbuffer, unsigned long nbsample, jar_mod_tracker_buffer_state * trkbuf);
+JAR_MOD_DEF
 void   jar_mod_unload(jar_mod_context_t * modctx);
+JAR_MOD_DEF
 mulong jar_mod_load_file(jar_mod_context_t * modctx, const char* filename);
+JAR_MOD_DEF
 mulong jar_mod_current_samples(jar_mod_context_t * modctx);
+JAR_MOD_DEF
 mulong jar_mod_max_samples(jar_mod_context_t * modctx);
+JAR_MOD_DEF
 void   jar_mod_seek_start(jar_mod_context_t * ctx);
 
 #ifdef __cplusplus
 }
 #endif
 //--------------------------------------------------------------------
+
+
+#endif //end of header file
 
 
 
@@ -328,10 +343,11 @@ static const short sintable[]={
 
 typedef struct modtype_
 {
-    unsigned char signature[5];
+    unsigned char signature[4];
     int numberofchannels;
 }modtype;
 
+static const
 modtype modlist[]=
 {
     { "M!K!",4},
@@ -1054,6 +1070,7 @@ static void workeffect( note * nptr, channel * cptr )
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
+JAR_MOD_DEF
 bool jar_mod_init(jar_mod_context_t * modctx)
 {
     muint i,j;
@@ -1081,6 +1098,7 @@ bool jar_mod_init(jar_mod_context_t * modctx)
     return 0;
 }
 
+JAR_MOD_DEF
 bool jar_mod_setcfg(jar_mod_context_t * modctx, int samplerate, int bits, int stereo, int stereo_separation, int filter)
 {
     if( modctx )
@@ -1136,7 +1154,7 @@ static bool jar_mod_load( jar_mod_context_t * modctx, void * mod_data, int mod_d
             modctx->number_of_channels = 0;
             while(modlist[i].numberofchannels)
             {
-                if(memcompare(modctx->song.signature,modlist[i].signature,4))
+                if(memcompare(modctx->song.signature,(unsigned char*)modlist[i].signature,4))
                 {
                     modctx->number_of_channels = modlist[i].numberofchannels;
                 }
@@ -1232,6 +1250,7 @@ static bool jar_mod_load( jar_mod_context_t * modctx, void * mod_data, int mod_d
     return 0;
 }
 
+JAR_MOD_DEF
 void jar_mod_fillbuffer( jar_mod_context_t * modctx, short * outbuffer, unsigned long nbsample, jar_mod_tracker_buffer_state * trkbuf )
 {
     unsigned long i, j;
@@ -1502,6 +1521,7 @@ static bool jar_mod_reset( jar_mod_context_t * modctx)
     return 0;
 }
 
+JAR_MOD_DEF
 void jar_mod_unload( jar_mod_context_t * modctx)
 {
     if(modctx)
@@ -1517,6 +1537,7 @@ void jar_mod_unload( jar_mod_context_t * modctx)
     }
 }
 
+JAR_MOD_DEF
 mulong jar_mod_load_file(jar_mod_context_t * modctx, const char* filename)
 {
     mulong fsize = 0;
@@ -1547,6 +1568,7 @@ mulong jar_mod_load_file(jar_mod_context_t * modctx, const char* filename)
     return fsize;
 }
 
+JAR_MOD_DEF
 mulong jar_mod_current_samples(jar_mod_context_t * modctx)
 {
     if(modctx)
@@ -1556,6 +1578,7 @@ mulong jar_mod_current_samples(jar_mod_context_t * modctx)
 }
 
 // Works, however it is very slow, this data should be cached to ensure it is run only once per file
+JAR_MOD_DEF
 mulong jar_mod_max_samples(jar_mod_context_t * ctx)
 {
     mint buff[2];
@@ -1572,6 +1595,7 @@ mulong jar_mod_max_samples(jar_mod_context_t * ctx)
 }
 
 // move seek_val to sample index, 0 -> jar_mod_max_samples is the range
+JAR_MOD_DEF
 void jar_mod_seek_start(jar_mod_context_t * ctx)
 {
     if(ctx && ctx->modfile)
@@ -1591,6 +1615,3 @@ void jar_mod_seek_start(jar_mod_context_t * ctx)
 
 #endif // end of JAR_MOD_IMPLEMENTATION
 //-------------------------------------------------------------------------------
-
-
-#endif //end of header file

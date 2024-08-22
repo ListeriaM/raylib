@@ -113,6 +113,14 @@
     #define RLAPI       // Functions defined as 'extern' by default (implicit specifiers)
 #endif
 
+#ifndef RLAPI_PRIVATE
+    #ifdef __GNUC__
+        #define RLAPI_PRIVATE __attribute__((unused)) static
+    #else
+        #define RLAPI_PRIVATE static
+    #endif
+#endif
+
 //----------------------------------------------------------------------------------
 // Defines and Macros
 //----------------------------------------------------------------------------------

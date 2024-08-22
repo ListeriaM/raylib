@@ -879,6 +879,7 @@ RLAPI void rlLoadDrawQuad(void);     // Load and draw a quad
     #define GLAD_MALLOC RL_MALLOC
     #define GLAD_FREE RL_FREE
 
+    #define GLAD_API_CALL RLAPI_PRIVATE
     #define GLAD_GL_IMPLEMENTATION
     #include "external/glad.h"          // GLAD extensions loading library, includes OpenGL headers
 #endif
@@ -892,6 +893,7 @@ RLAPI void rlLoadDrawQuad(void);     // Load and draw a quad
     // in that case, functions are loaded from a custom glad for OpenGL ES 2.0
     // TODO: OpenGL ES 2.0 support shouldn't be platform-dependant, neither require GLAD
     #if defined(PLATFORM_DESKTOP_GLFW) || defined(PLATFORM_DESKTOP_SDL)
+        #define GLAD_API_CALL RLAPI_PRIVATE
         #define GLAD_GLES2_IMPLEMENTATION
         #include "external/glad_gles2.h"
     #else

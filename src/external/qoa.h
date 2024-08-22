@@ -109,6 +109,10 @@ dequantized residual forms the final output sample.
 #ifndef QOA_H
 #define QOA_H
 
+#ifndef QOADEF
+# define QOADEF
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -140,18 +144,27 @@ typedef struct {
 	#endif
 } qoa_desc;
 
+QOADEF
 unsigned int qoa_encode_header(qoa_desc *qoa, unsigned char *bytes);
+QOADEF
 unsigned int qoa_encode_frame(const short *sample_data, qoa_desc *qoa, unsigned int frame_len, unsigned char *bytes);
+QOADEF
 void *qoa_encode(const short *sample_data, qoa_desc *qoa, unsigned int *out_len);
 
+QOADEF
 unsigned int qoa_max_frame_size(qoa_desc *qoa);
+QOADEF
 unsigned int qoa_decode_header(const unsigned char *bytes, int size, qoa_desc *qoa);
+QOADEF
 unsigned int qoa_decode_frame(const unsigned char *bytes, unsigned int size, qoa_desc *qoa, short *sample_data, unsigned int *frame_len);
+QOADEF
 short *qoa_decode(const unsigned char *bytes, int size, qoa_desc *file);
 
 #ifndef QOA_NO_STDIO
 
+QOADEF
 int qoa_write(const char *filename, const short *sample_data, qoa_desc *qoa);
+QOADEF
 void *qoa_read(const char *filename, qoa_desc *qoa);
 
 #endif /* QOA_NO_STDIO */
@@ -343,12 +356,14 @@ static inline void qoa_write_u64(qoa_uint64_t v, unsigned char *bytes, unsigned 
 /* -----------------------------------------------------------------------------
 	Encoder */
 
+QOADEF
 unsigned int qoa_encode_header(qoa_desc *qoa, unsigned char *bytes) {
 	unsigned int p = 0;
 	qoa_write_u64(((qoa_uint64_t)QOA_MAGIC << 32) | qoa->samples, bytes, &p);
 	return p;
 }
 
+QOADEF
 unsigned int qoa_encode_frame(const short *sample_data, qoa_desc *qoa, unsigned int frame_len, unsigned char *bytes) {
 	unsigned int channels = qoa->channels;
 
@@ -483,6 +498,7 @@ unsigned int qoa_encode_frame(const short *sample_data, qoa_desc *qoa, unsigned 
 	return p;
 }
 
+QOADEF
 void *qoa_encode(const short *sample_data, qoa_desc *qoa, unsigned int *out_len) {
 	if (
 		qoa->samples == 0 || 
@@ -541,10 +557,12 @@ void *qoa_encode(const short *sample_data, qoa_desc *qoa, unsigned int *out_len)
 /* -----------------------------------------------------------------------------
 	Decoder */
 
+QOADEF
 unsigned int qoa_max_frame_size(qoa_desc *qoa) {
 	return QOA_FRAME_SIZE(qoa->channels, QOA_SLICES_PER_FRAME);
 }
 
+QOADEF
 unsigned int qoa_decode_header(const unsigned char *bytes, int size, qoa_desc *qoa) {
 	unsigned int p = 0;
 	if (size < QOA_MIN_FILESIZE) {
@@ -578,6 +596,7 @@ unsigned int qoa_decode_header(const unsigned char *bytes, int size, qoa_desc *q
 	return 8;
 }
 
+QOADEF
 unsigned int qoa_decode_frame(const unsigned char *bytes, unsigned int size, qoa_desc *qoa, short *sample_data, unsigned int *frame_len) {
 	unsigned int p = 0;
 	*frame_len = 0;
@@ -649,6 +668,7 @@ unsigned int qoa_decode_frame(const unsigned char *bytes, unsigned int size, qoa
 	return p;
 }
 
+QOADEF
 short *qoa_decode(const unsigned char *bytes, int size, qoa_desc *qoa) {
 	unsigned int p = qoa_decode_header(bytes, size, qoa);
 	if (!p) {
@@ -684,6 +704,7 @@ short *qoa_decode(const unsigned char *bytes, int size, qoa_desc *qoa) {
 #ifndef QOA_NO_STDIO
 #include <stdio.h>
 
+QOADEF
 int qoa_write(const char *filename, const short *sample_data, qoa_desc *qoa) {
 	FILE *f = fopen(filename, "wb");
 	unsigned int size;
@@ -706,6 +727,7 @@ int qoa_write(const char *filename, const short *sample_data, qoa_desc *qoa) {
 	return size;
 }
 
+QOADEF
 void *qoa_read(const char *filename, qoa_desc *qoa) {
 	FILE *f = fopen(filename, "rb");
 	int size, bytes_read;

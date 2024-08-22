@@ -30,6 +30,10 @@
 *
 **********************************************************************************************/
 
+#ifndef QOAPLAYDEF
+# define QOAPLAYDEF
+#endif
+
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
 //----------------------------------------------------------------------------------
@@ -61,16 +65,26 @@ typedef struct {
 extern "C" {            // Prevents name mangling of functions
 #endif
 
+QOAPLAYDEF
 qoaplay_desc *qoaplay_open(const char *path);
+QOAPLAYDEF
 qoaplay_desc *qoaplay_open_memory(const unsigned char *data, int data_size);
+QOAPLAYDEF
 void qoaplay_close(qoaplay_desc *qoa_ctx);
 
+QOAPLAYDEF
 void qoaplay_rewind(qoaplay_desc *qoa_ctx);
+QOAPLAYDEF
 void qoaplay_seek_frame(qoaplay_desc *qoa_ctx, int frame);
+QOAPLAYDEF
 unsigned int qoaplay_decode(qoaplay_desc *qoa_ctx, float *sample_data, int num_samples);
+QOAPLAYDEF
 unsigned int qoaplay_decode_frame(qoaplay_desc *qoa_ctx);
+QOAPLAYDEF
 double qoaplay_get_duration(qoaplay_desc *qoa_ctx);
+QOAPLAYDEF
 double qoaplay_get_time(qoaplay_desc *qoa_ctx);
+QOAPLAYDEF
 int qoaplay_get_frame(qoaplay_desc *qoa_ctx);
 
 #if defined(__cplusplus)
@@ -82,6 +96,7 @@ int qoaplay_get_frame(qoaplay_desc *qoa_ctx);
 //----------------------------------------------------------------------------------
 
 // Open QOA file, keep FILE pointer to keep reading from file
+QOAPLAYDEF
 qoaplay_desc *qoaplay_open(const char *path)
 {
     FILE *file = fopen(path, "rb");
@@ -125,6 +140,7 @@ qoaplay_desc *qoaplay_open(const char *path)
 }
 
 // Open QOA file from memory, no FILE pointer required
+QOAPLAYDEF
 qoaplay_desc *qoaplay_open_memory(const unsigned char *data, int data_size)
 {
     qoa_desc qoa;
@@ -160,6 +176,7 @@ qoaplay_desc *qoaplay_open_memory(const unsigned char *data, int data_size)
 }
 
 // Close QOA file (if open) and free internal memory
+QOAPLAYDEF
 void qoaplay_close(qoaplay_desc *qoa_ctx)
 {
     if (qoa_ctx->file) fclose(qoa_ctx->file);
@@ -170,6 +187,7 @@ void qoaplay_close(qoaplay_desc *qoa_ctx)
 }
 
 // Decode one frame from QOA data
+QOAPLAYDEF
 unsigned int qoaplay_decode_frame(qoaplay_desc *qoa_ctx)
 {
     unsigned char *buffer;
@@ -196,6 +214,7 @@ unsigned int qoaplay_decode_frame(qoaplay_desc *qoa_ctx)
 }
 
 // Rewind QOA file or memory pointer to beginning
+QOAPLAYDEF
 void qoaplay_rewind(qoaplay_desc *qoa_ctx)
 {
     if (qoa_ctx->file) fseek(qoa_ctx->file, qoa_ctx->first_frame_pos, SEEK_SET);
@@ -207,6 +226,7 @@ void qoaplay_rewind(qoaplay_desc *qoa_ctx)
 }
 
 // Decode required QOA frames
+QOAPLAYDEF
 unsigned int qoaplay_decode(qoaplay_desc *qoa_ctx, float *sample_data, int num_samples)
 {
     int src_index = qoa_ctx->sample_data_pos*qoa_ctx->info.channels;
@@ -241,24 +261,28 @@ unsigned int qoaplay_decode(qoaplay_desc *qoa_ctx, float *sample_data, int num_s
 }
 
 // Get QOA total time duration in seconds
+QOAPLAYDEF
 double qoaplay_get_duration(qoaplay_desc *qoa_ctx)
 {
     return (double)qoa_ctx->info.samples/(double)qoa_ctx->info.samplerate;
 }
 
 // Get QOA current time position in seconds
+QOAPLAYDEF
 double qoaplay_get_time(qoaplay_desc *qoa_ctx)
 {
     return (double)qoa_ctx->sample_position/(double)qoa_ctx->info.samplerate;
 }
 
 // Get QOA current audio frame
+QOAPLAYDEF
 int qoaplay_get_frame(qoaplay_desc *qoa_ctx)
 {
     return qoa_ctx->sample_position/QOA_FRAME_LEN;
 }
 
 // Seek QOA audio frame
+QOAPLAYDEF
 void qoaplay_seek_frame(qoaplay_desc *qoa_ctx, int frame)
 {
     if (frame < 0) frame = 0;

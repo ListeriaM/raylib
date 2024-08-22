@@ -77,6 +77,7 @@
         #pragma GCC diagnostic ignored "-Wunused-function"
     #endif
 
+    #define STBRP_STATIC
     #define STB_RECT_PACK_IMPLEMENTATION
     #include "external/stb_rect_pack.h"     // Required for: ttf/bdf font rectangles packaging
 

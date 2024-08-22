@@ -111,6 +111,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef SDEFL_H_INCLUDED
 #define SDEFL_H_INCLUDED
 
+#ifndef SDEFL_DEF
+# define SDEFL_DEF
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -164,9 +168,9 @@ struct sdefl {
   struct sdefl_freq freq;
   struct sdefl_codes cod;
 };
-extern int sdefl_bound(int in_len);
-extern int sdeflate(struct sdefl *s, void *o, const void *i, int n, int lvl);
-extern int zsdeflate(struct sdefl *s, void *o, const void *i, int n, int lvl);
+SDEFL_DEF int sdefl_bound(int in_len);
+SDEFL_DEF int sdeflate(struct sdefl *s, void *o, const void *i, int n, int lvl);
+SDEFL_DEF int zsdeflate(struct sdefl *s, void *o, const void *i, int n, int lvl);
 
 #ifdef __cplusplus
 }
@@ -726,7 +730,7 @@ sdefl_compr(struct sdefl *s, unsigned char *out, const unsigned char *in,
   assert(s->bitcnt == 0);
   return (int)(q - out);
 }
-extern int
+SDEFL_DEF int
 sdeflate(struct sdefl *s, void *out, const void *in, int n, int lvl) {
   s->bits = s->bitcnt = 0;
   return sdefl_compr(s, (unsigned char*)out, (const unsigned char*)in, n, lvl);
@@ -762,7 +766,7 @@ sdefl_adler32(unsigned adler32, const unsigned char *in, int in_len) {
   }
   return (unsigned)(s2 << 16) + (unsigned)s1;
 }
-extern int
+SDEFL_DEF int
 zsdeflate(struct sdefl *s, void *out, const void *in, int n, int lvl) {
   int p = 0;
   unsigned a = 0;
@@ -781,7 +785,7 @@ zsdeflate(struct sdefl *s, void *out, const void *in, int n, int lvl) {
   }
   return (int)(q - (unsigned char*)out);
 }
-extern int
+SDEFL_DEF int
 sdefl_bound(int len) {
   int max_blocks = 1 + sdefl_div_round_up(len, SDEFL_RAW_BLK_SIZE);
   int bound = 5 * max_blocks + len + 1 + 4 + 8;
