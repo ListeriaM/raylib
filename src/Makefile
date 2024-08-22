@@ -814,10 +814,10 @@ android_native_app_glue.o : $(NATIVE_APP_GLUE)/android_native_app_glue.c
 # See below and ../examples/Makefile for more information.
 
 # RAYLIB_INSTALL_PATH should be the desired full path to libraylib. No relative paths.
-DESTDIR ?= /usr/local
-RAYLIB_INSTALL_PATH ?= $(DESTDIR)/lib
+PREFIX = /usr/local
+RAYLIB_INSTALL_PATH ?= $(DESTDIR)$(PREFIX)/lib
 # RAYLIB_H_INSTALL_PATH locates the installed raylib header and associated source files.
-RAYLIB_H_INSTALL_PATH ?= $(DESTDIR)/include
+RAYLIB_H_INSTALL_PATH ?= $(DESTDIR)$(PREFIX)/include
 
 install :
 ifeq ($(PLATFORM_OS),LINUX)
