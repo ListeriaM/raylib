@@ -1540,17 +1540,10 @@ const char *TextFormat(const char *text, ...)
 int TextToInteger(const char *text)
 {
     int value = 0;
-    int sign = 1;
 
-    if ((text[0] == '+') || (text[0] == '-'))
-    {
-        if (text[0] == '-') sign = -1;
-        text++;
-    }
+    for (int i = ((text[0] == '+') || (text[0] == '-')); ((text[i] >= '0') && (text[i] <= '9')); i++) value = value*10 - (int)(text[i] - '0');
 
-    for (int i = 0; ((text[i] >= '0') && (text[i] <= '9')); i++) value = value*10 + (int)(text[i] - '0');
-
-    return value*sign;
+    return ((text[0] == '-') ? value : -value);
 }
 
 // Get float value from text
