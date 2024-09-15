@@ -1,15 +1,12 @@
 /**********************************************************************************************
 *
-*   rprand v1.0 - A simple and easy-to-use pseudo-random numbers generator (PRNG)
+*   rprand v1.1 - A simple and easy-to-use pseudo-random numbers generator (PRNG)
 *
 *   FEATURES:
 *       - Pseudo-random values generation, 32 bits: [0..4294967295]
 *       - Sequence generation avoiding duplicate values
 *       - Using standard and proven prng algorithm (Xoshiro128**)
 *       - State initialized with a separate generator (SplitMix64)
-*
-*   LIMITATIONS:
-*       - No negative numbers, up to the user to manage them
 *
 *   POSSIBLE IMPROVEMENTS:
 *       - Support 64 bits generation
@@ -35,11 +32,13 @@
 *   DEPENDENCIES: none
 *
 *   VERSIONS HISTORY:
+*       1.1 (15-Sep-2022)
 *       1.0 (01-Jun-2023) First version
 *
 *
 *   LICENSE: zlib/libpng
 *
+*   Copyright (c) 2024 Listeria monocytogenes (@ListeriaM)
 *   Copyright (c) 2023 Ramon Santamaria (@raysan5)
 *
 *   This software is provided "as-is", without any express or implied warranty. In no event
@@ -62,7 +61,7 @@
 #ifndef RPRAND_H
 #define RPRAND_H
 
-#define RPRAND_VERSION    "1.0"
+#define RPRAND_VERSION    "1.1"
 
 // Function specifiers in case library is build/used as a shared library (Windows)
 // NOTE: Microsoft specifiers to tell compiler that symbols are imported/exported from a .dll
